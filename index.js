@@ -1,5 +1,7 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
+app.use(bodyParser.json());
 
 const availabilities = [
   {
@@ -22,8 +24,29 @@ const availabilities = [
 ];
 
 app.get("/visits", (req, res) => {
-  availabilities[0].date = req.query.date;
+  availabilities[0].date = req.body.date;
   res.send(availabilities);
+});
+
+app.post("/visits", (req, res) => {
+  availabilities[0].date = req.body.date;
+  if (availabilities[0].slots[req.body.slot].isAvailable === true) {
+    availabilities[0].slots[req.body.slot].isAvailable = false;
+    availabilities[0].slots[req.body.slot].name = req.body.name;
+    res.send({
+      message: "Successfuly booked"
+    });
+  } else {
+    res.send({
+      error: {
+        message: "Slot already booked"
+      }
+    });
+  }
+});
+
+app.all("*", (req, res) => {
+  res.status(404).send("Page Not Found");
 });
 
 app.listen(3000, () => {
