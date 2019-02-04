@@ -2,8 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const dateFns = require("date-fns");
 const uuidv1 = require("uuid/v1");
+const mongoose = require("mongoose");
 const app = express();
 app.use(bodyParser.json());
+
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/doctolib", {
+  useNewUrlParser: true
+});
 
 const availabilities = [
   {
@@ -108,6 +113,6 @@ app.all("*", (req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
